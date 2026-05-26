@@ -140,38 +140,44 @@ def get_questions():
     if 'user_id' not in session:
         return jsonify({'error': 'Unauthorized'}), 401
     
-    # Get 25 random Math questions
-    math_questions = Question.query.filter_by(subject='Math').order_by(db.func.random()).limit(25).all()
+    try:
+        # Get ALL questions first (no randomization at DB level - it's slow!)
+        all_math = Question.query.filter_by(subject='Math').all()
+        all_science = Question.query.filter_by(subject='Science').all()
+        
+        # Check if we have enough questions
+        if len(all_math) == 0 or len(all_science) == 0:
+            return jsonify({'error': 'Questions not loaded in database. Please try again.'}), 500
+        
+        # Randomize using Python (much faster!)
+        math_questions = random.sample(all_math, min(25, len(all_math)))
+        science_questions = random.sample(all_science, min(25, len(all_science)))
+        
+        # Combine questions
+        all_questions = math_questions + science_questions
+        
+        # Format response
+        questions_data = []
+        for q in all_questions:
+            questions_data.append({
+                'id': q.id,
+                'subject': q.subject,
+                'question': q.question_text,
+                'options': {
+                    'A': q.option_a,
+                    'B': q.option_b,
+                    'C': q.option_c,
+                    'D': q.option_d
+                }
+            })
+        
+        return jsonify({'questions': questions_data})
     
-    # Get 25 random Science questions
-    science_questions = Question.query.filter_by(subject='Science').order_by(db.func.random()).limit(25).all()
-    
-    # If not enough questions, fill with available ones
-    if len(math_questions) < 25:
-        math_questions = Question.query.filter_by(subject='Math').all()
-    
-    if len(science_questions) < 25:
-        science_questions = Question.query.filter_by(subject='Science').all()
-    
-    # Combine questions
-    all_questions = math_questions + science_questions
-    
-    # Format response
-    questions_data = []
-    for q in all_questions:
-        questions_data.append({
-            'id': q.id,
-            'subject': q.subject,
-            'question': q.question_text,
-            'options': {
-                'A': q.option_a,
-                'B': q.option_b,
-                'C': q.option_c,
-                'D': q.option_d
-            }
-        })
-    
-    return jsonify({'questions': questions_data})
+    except Exception as e:
+        print(f"Error fetching questions: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to load questions. Please try again.'}), 500
 
 
 @quiz_bp.route('/submit', methods=['POST'])

@@ -9,15 +9,31 @@ let timeStarted = Date.now();
 // Initialize quiz
 async function initQuiz() {
     try {
+        console.log('Loading questions...');
+        document.getElementById('loading').textContent = 'Loading questions...';
+        
         const response = await fetch('/quiz/get-questions');
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
-            alert('Error loading questions. Please try again.');
+            const errorData = await response.json();
+            console.error('Error response:', errorData);
+            document.getElementById('loading').innerHTML = `<p style="color: red;">Error: ${errorData.error || 'Failed to load questions'}</p>`;
             return;
         }
         
         const data = await response.json();
-        questions = data.questions;
+        console.log('Questions received:', data.questions.length);
         
+        if (!data.questions || data.questions.length === 0) {
+            document.getElementById('loading').innerHTML = '<p style="color: red;">No questions loaded. Please try again.</p>';
+            return;
+        }
+        
+        questions = data.questions;
+        console.log('Quiz initialized with', questions.length, 'questions');
+        
+        // Hide loading, show quiz
         document.getElementById('loading').style.display = 'none';
         document.getElementById('quiz-body').style.display = 'block';
         
@@ -26,29 +42,55 @@ async function initQuiz() {
         startTimer();
     } catch (error) {
         console.error('Error:', error);
-        alert('Error loading quiz. Please refresh the page.');
+        document.getElementById('loading').innerHTML = `<p style="color: red;">Error loading quiz: ${error.message}</p><p>Please refresh the page.</p>`;
     }
 }
 
 // Display current question
 function displayQuestion() {
     if (currentQuestionIndex >= questions.length) {
+        console.warn('Question index out of range:', currentQuestionIndex, 'Total questions:', questions.length);
         return;
     }
     
     const question = questions[currentQuestionIndex];
     
-    // Update question text
-    document.getElementById('question-text').textContent = question.question;
+    // Validate question data
+    if (!question || !question.question || !question.options) {
+        console.error('Invalid question data:', question);
+        return;
+    }
     
-    // Update options
-    document.getElementById('option-a').textContent = question.options.A;
-    document.getElementById('option-b').textContent = question.options.B;
-    document.getElementById('option-c').textContent = question.options.C;
-    document.getElementById('option-d').textContent = question.options.D;
+    console.log('Displaying question', currentQuestionIndex + 1, ':', question.question);
+    
+    // Update question text
+    const questionTextEl = document.getElementById('question-text');
+    if (questionTextEl) {
+        questionTextEl.textContent = question.question;
+    }
+    
+    // Update options - check if elements exist
+    const optionA = document.getElementById('option-a');
+    const optionB = document.getElementById('option-b');
+    const optionC = document.getElementById('option-c');
+    const optionD = document.getElementById('option-d');
+    
+    if (optionA) optionA.textContent = question.options.A || '';
+    if (optionB) optionB.textContent = question.options.B || '';
+    if (optionC) optionC.textContent = question.options.C || '';
+    if (optionD) optionD.textContent = question.options.D || '';
     
     // Update subject badge
-    document.getElementById('subject-badge').textContent = question.subject;
+    const subjectBadge = document.getElementById('subject-badge');
+    if (subjectBadge) {
+        subjectBadge.textContent = question.subject;
+    }
+    
+    // Update question counter
+    const counterEl = document.getElementById('question-counter');
+    if (counterEl) {
+        counterEl.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+    }
     
     // Reset radio buttons
     const radios = document.querySelectorAll('input[name="answer"]');
