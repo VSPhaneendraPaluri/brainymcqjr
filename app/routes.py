@@ -141,20 +141,48 @@ def get_questions():
         return jsonify({'error': 'Unauthorized'}), 401
     
     try:
+        # DEBUG: Log database connection info
+        print("=" * 60)
+        print("QUIZ LOADING - DATABASE DIAGNOSTIC")
+        print("=" * 60)
+        
+        # First, check if database is accessible
+        try:
+            total_questions = Question.query.count()
+            print(f"✓ Database connected. Total questions in DB: {total_questions}")
+        except Exception as db_error:
+            error_msg = f"DATABASE CONNECTION FAILED: {str(db_error)}"
+            print(f"✗ {error_msg}")
+            return jsonify({'error': error_msg}), 500
+        
         # Get ALL questions first (no randomization at DB level - it's slow!)
+        print("\nFetching Math questions...")
         all_math = Question.query.filter_by(subject='Math').all()
+        print(f"  Found {len(all_math)} Math questions")
+        
+        print("Fetching Science questions...")
         all_science = Question.query.filter_by(subject='Science').all()
+        print(f"  Found {len(all_science)} Science questions")
         
         # Check if we have enough questions
-        if len(all_math) == 0 or len(all_science) == 0:
-            return jsonify({'error': 'Questions not loaded in database. Please try again.'}), 500
+        if len(all_math) == 0:
+            error_msg = f"NO MATH QUESTIONS FOUND IN DATABASE. Total questions: {total_questions}"
+            print(f"✗ {error_msg}")
+            return jsonify({'error': error_msg}), 500
+        
+        if len(all_science) == 0:
+            error_msg = f"NO SCIENCE QUESTIONS FOUND IN DATABASE. Total questions: {total_questions}"
+            print(f"✗ {error_msg}")
+            return jsonify({'error': error_msg}), 500
         
         # Randomize using Python (much faster!)
+        print("\nRandomizing questions...")
         math_questions = random.sample(all_math, min(25, len(all_math)))
         science_questions = random.sample(all_science, min(25, len(all_science)))
         
         # Combine questions
         all_questions = math_questions + science_questions
+        print(f"✓ Prepared {len(all_questions)} questions for quiz")
         
         # Format response
         questions_data = []
@@ -171,13 +199,20 @@ def get_questions():
                 }
             })
         
+        print(f"✓ Quiz loaded successfully with {len(questions_data)} questions")
+        print("=" * 60)
+        
         return jsonify({'questions': questions_data})
     
     except Exception as e:
-        print(f"Error fetching questions: {str(e)}")
         import traceback
-        traceback.print_exc()
-        return jsonify({'error': 'Failed to load questions. Please try again.'}), 500
+        error_trace = traceback.format_exc()
+        error_msg = str(e)
+        print(f"\n✗ EXCEPTION in get_questions:")
+        print(f"  Error: {error_msg}")
+        print(f"  Traceback:\n{error_trace}")
+        print("=" * 60)
+        return jsonify({'error': f'Database error: {error_msg}'}), 500
 
 
 @quiz_bp.route('/submit', methods=['POST'])
