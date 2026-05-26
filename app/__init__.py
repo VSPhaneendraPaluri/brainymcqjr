@@ -11,9 +11,14 @@ def create_app():
     # Configuration
     import os
     db_uri = os.environ.get('DATABASE_URL', 'sqlite:///mcq_quiz.db')
+    
+    # Handle PostgreSQL connection string format from Render
+    if db_uri.startswith('postgres://'):
+        db_uri = db_uri.replace('postgres://', 'postgresql://', 1)
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'your-secret-key-change-in-production'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
     app.config['PREFERRED_URL_SCHEME'] = 'https'
     
     # Initialize database
