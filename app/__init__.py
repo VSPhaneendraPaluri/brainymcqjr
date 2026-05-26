@@ -21,6 +21,13 @@ def create_app():
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
     app.config['PREFERRED_URL_SCHEME'] = 'https'
     
+    # Session configuration
+    is_production = os.environ.get('FLASK_ENV') == 'production'
+    app.config['SESSION_COOKIE_SECURE'] = is_production  # Only send over HTTPS in production
+    app.config['SESSION_COOKIE_HTTPONLY'] = True  # No JavaScript access
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
+    app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
+    
     # Initialize database
     db.init_app(app)
     
@@ -47,9 +54,13 @@ def create_app():
     @app.before_request
     def before_request():
         from flask import request, redirect
-        # Only enforce in production (not localhost)
-        if not app.debug and request.headers.get('X-Forwarded-Proto', 'http') != 'https':
-            return redirect(request.url.replace('http://', 'https://', 1), code=301)
+        # Only enforce in production (not localhost) and only for GET requests
+        # Don't redirect POST/PUT/DELETE to avoid losing form data
+        if not app.debug and request.method == 'GET':
+            x_forwarded_proto = request.headers.get('X-Forwarded-Proto', 'http')
+            if x_forwarded_proto != 'https' and 'localhost' not in request.host:
+                url = request.url.replace('http://', 'https://', 1)
+                return redirect(url, code=301)
     
     # Register blueprints
     from app.routes import main_bp, auth_bp, quiz_bp

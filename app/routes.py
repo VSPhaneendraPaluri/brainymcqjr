@@ -78,20 +78,30 @@ def register():
 def login():
     """User login"""
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        if not username or not password:
-            return render_template('login.html', error='Username and password required')
-        
-        user = User.query.filter_by(username=username).first()
-        
-        if user and user.check_password(password):
+        try:
+            username = request.form.get('username')
+            password = request.form.get('password')
+            
+            if not username or not password:
+                return render_template('login.html', error='Username and password required')
+            
+            user = User.query.filter_by(username=username).first()
+            
+            if user is None:
+                return render_template('login.html', error='Invalid username or password')
+            
+            if not user.check_password(password):
+                return render_template('login.html', error='Invalid username or password')
+            
             session['user_id'] = user.id
             session['username'] = user.username
             return redirect(url_for('main.dashboard'))
-        
-        return render_template('login.html', error='Invalid username or password')
+            
+        except Exception as e:
+            import traceback
+            print(f"Login error: {str(e)}")
+            traceback.print_exc()
+            return render_template('login.html', error='An error occurred during login. Please try again.')
     
     success = request.args.get('success')
     return render_template('login.html', success=success)
