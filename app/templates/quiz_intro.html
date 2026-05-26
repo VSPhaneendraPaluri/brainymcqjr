@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Start Quiz - BrainyMCQ Junior{% endblock %}
+
+{% block content %}
+<div class="quiz-intro">
+    <div class="intro-box">
+        <h2>Ready for the Challenge? 🚀</h2>
+        
+        <div class="quiz-info">
+            <div class="info-item">
+                <span class="info-icon">📝</span>
+                <div>
+                    <h4>50 Questions</h4>
+                    <p>25 Maths + 25 Science</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-icon">⏱️</span>
+                <div>
+                    <h4>Timed Quiz</h4>
+                    <p>60 minutes to complete</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-icon">✅</span>
+                <div>
+                    <h4>Instant Results</h4>
+                    <p>See your score immediately</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Guidelines:</h3>
+            <ul>
+                <li>✓ You have 60 minutes to complete the quiz</li>
+                <li>✓ Each question has 4 options (A, B, C, D)</li>
+                <li>✓ Select only one correct answer per question</li>
+                <li>✓ You can review and change your answers before submitting</li>
+                <li>✓ Your score will be calculated and saved automatically</li>
+                <li>✓ Questions are randomly selected for each quiz</li>
+            </ul>
+        </div>
+        
+        <div class="cta-buttons">
+            <button class="btn btn-primary btn-lg" onclick="beginQuiz()">Begin Quiz</button>
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function beginQuiz() {
+    // Redirect to quiz page
+    window.location.href = "{{ url_for('quiz.quiz_interface') }}";
+}
+</script>
+{% endblock %}

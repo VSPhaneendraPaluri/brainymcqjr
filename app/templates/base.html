@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MCQ Quiz - Class 3-5{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>📚 BrainyMCQ Junior</h1>
+            </div>
+            <div class="nav-menu">
+                {% if session.get('user_id') %}
+                    <span class="username">Welcome, {{ session.get('username') }}!</span>
+                    <a href="{{ url_for('main.dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="nav-link">Register</a>
+                {% endif %}
+                <a href="{{ url_for('main.help_page') }}" class="nav-link">Help</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 BrainyMCQ Junior. An interactive learning platform for students.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

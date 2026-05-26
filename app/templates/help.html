@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Getting Started - BrainyMCQ Junior{% endblock %}
+
+{% block content %}
+<div class="help-container">
+    <h2>Getting Started Guide 📖</h2>
+
+    <section class="help-section">
+        <h3>1. How to Register?</h3>
+        <div class="help-content">
+            <ol>
+                <li>Click on the <strong>"Register"</strong> button on the home page</li>
+                <li>Enter a <strong>username</strong> (e.g., "john_doe")</li>
+                <li>Enter your <strong>email address</strong></li>
+                <li>Create a <strong>password</strong> (minimum 6 characters)</li>
+                <li>Confirm your password</li>
+                <li>Click <strong>"Register"</strong> button</li>
+                <li>You will be redirected to the login page</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>2. How to Login?</h3>
+        <div class="help-content">
+            <ol>
+                <li>Click on the <strong>"Login"</strong> button</li>
+                <li>Enter your <strong>username</strong></li>
+                <li>Enter your <strong>password</strong></li>
+                <li>Click the <strong>"Login"</strong> button</li>
+                <li>You will be directed to your personal dashboard</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>3. How to Take a Quiz?</h3>
+        <div class="help-content">
+            <ol>
+                <li>From your <strong>Dashboard</strong>, click <strong>"Start New Quiz"</strong></li>
+                <li>Review the quiz guidelines</li>
+                <li>Click <strong>"Begin Quiz"</strong> to start</li>
+                <li>You will have <strong>60 minutes</strong> to complete the quiz</li>
+                <li>The quiz contains <strong>50 questions</strong>:
+                    <ul>
+                        <li>25 Mathematics questions</li>
+                        <li>25 Science questions</li>
+                    </ul>
+                </li>
+                <li>Select one option (A, B, C, or D) for each question</li>
+                <li>Use <strong>"Previous"</strong> and <strong>"Next"</strong> buttons to navigate</li>
+                <li>Review the <strong>Questions Overview</strong> on the side to track progress</li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>4. How to Submit Quiz?</h3>
+        <div class="help-content">
+            <ol>
+                <li>After answering all questions, click <strong>"Submit Quiz"</strong> button</li>
+                <li>Your answers will be automatically evaluated</li>
+                <li>You will see your results with:
+                    <ul>
+                        <li>Mathematics score (out of 25)</li>
+                        <li>Science score (out of 25)</li>
+                        <li>Total score (out of 50)</li>
+                        <li>Time taken</li>
+                        <li>Percentage scored</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>5. How to View Score History?</h3>
+        <div class="help-content">
+            <ol>
+                <li>Click on <strong>"Dashboard"</strong> from the navigation menu</li>
+                <li>You will see your <strong>"Quiz History"</strong> table</li>
+                <li>The table shows all your previous quiz attempts with:
+                    <ul>
+                        <li>Date and time of the quiz</li>
+                        <li>Mathematics score</li>
+                        <li>Science score</li>
+                        <li>Total score</li>
+                        <li>Time spent</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>6. Important Tips</h3>
+        <div class="help-content">
+            <ul>
+                <li>✓ Always keep your <strong>password safe</strong> and secure</li>
+                <li>✓ Don't share your <strong>login credentials</strong> with others</li>
+                <li>✓ Questions are <strong>randomly selected</strong> for each quiz</li>
+                <li>✓ You can take as many <strong>quizzes as you want</strong></li>
+                <li>✓ Your <strong>score history</strong> is maintained for each attempt</li>
+                <li>✓ Review your results to <strong>identify areas of improvement</strong></li>
+                <li>✓ Practice regularly to <strong>improve your scores</strong></li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>7. System Requirements</h3>
+        <div class="help-content">
+            <ul>
+                <li>✓ Any modern web browser (Chrome, Firefox, Safari, Edge)</li>
+                <li>✓ Internet connection for first access</li>
+                <li>✓ JavaScript enabled in your browser</li>
+                <li>✓ Cookies enabled for session management</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="help-section">
+        <h3>8. Troubleshooting</h3>
+        <div class="help-content">
+            <dl>
+                <dt><strong>Forgot Password?</strong></dt>
+                <dd>Contact your administrator or create a new account with a different username.</dd>
+                
+                <dt><strong>Session Timeout?</strong></dt>
+                <dd>Your session may expire after a long period of inactivity. Login again to continue.</dd>
+                
+                <dt><strong>Quiz Not Loading?</strong></dt>
+                <dd>Try refreshing the page or clearing your browser cache. Ensure JavaScript is enabled.</dd>
+                
+                <dt><strong>Can't See My Scores?</strong></dt>
+                <dd>Make sure you have submitted the quiz completely. Check your Dashboard for all attempts.</dd>
+            </dl>
+        </div>
+    </section>
+
+    <div class="help-footer">
+        <p>For more help, please contact the administrator or visit the Help section again.</p>
+        <a href="{{ url_for('main.dashboard') if session.get('user_id') else url_for('main.index') }}" class="btn btn-primary">
+            {{ 'Back to Dashboard' if session.get('user_id') else 'Back to Home' }}
+        </a>
+    </div>
+</div>
+{% endblock %}

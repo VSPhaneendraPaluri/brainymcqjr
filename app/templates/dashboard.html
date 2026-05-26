@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BrainyMCQ Junior{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Welcome, {{ user.username }}! 👋</h2>
+    
+    <div class="dashboard-actions">
+        <a href="{{ url_for('quiz.start_quiz') }}" class="btn btn-primary btn-lg">Start New Quiz</a>
+        <a href="{{ url_for('main.help_page') }}" class="btn btn-secondary">Need Help?</a>
+    </div>
+    
+    <section class="score-history">
+        <h3>Your Quiz History</h3>
+        
+        {% if scores %}
+            <div class="table-responsive">
+                <table class="score-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Maths Score</th>
+                            <th>Science Score</th>
+                            <th>Total Score</th>
+                            <th>Time Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for score in scores %}
+                            <tr>
+                                <td>{{ score.quiz_date.strftime('%d-%m-%Y %H:%M') }}</td>
+                                <td>
+                                    <span class="score-badge">{{ score.math_score }}/25</span>
+                                </td>
+                                <td>
+                                    <span class="score-badge">{{ score.science_score }}/25</span>
+                                </td>
+                                <td>
+                                    <strong>{{ score.total_score }}/50</strong>
+                                </td>
+                                <td>{{ (score.time_spent // 60) if score.time_spent else '-' }} min</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>No quiz attempts yet. <a href="{{ url_for('quiz.start_quiz') }}">Start your first quiz!</a></p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

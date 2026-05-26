@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz - BrainyMCQ Junior{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <div class="quiz-header">
+        <div class="timer-box">
+            <span class="timer-label">Time Remaining:</span>
+            <span id="timer" class="timer">60:00</span>
+        </div>
+        
+        <div class="progress-box">
+            <span id="question-counter">Question 1 of 50</span>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-content">
+        <div id="loading" class="loading">Loading questions...</div>
+        
+        <div id="quiz-body" style="display:none;">
+            <div id="question-container">
+                <h3 id="question-text"></h3>
+                
+                <div id="options-container" class="options">
+                    <label class="option">
+                        <input type="radio" name="answer" value="A">
+                        <span id="option-a"></span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="answer" value="B">
+                        <span id="option-b"></span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="answer" value="C">
+                        <span id="option-c"></span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="answer" value="D">
+                        <span id="option-d"></span>
+                    </label>
+                </div>
+                
+                <div class="subject-indicator">
+                    Subject: <span id="subject-badge"></span>
+                </div>
+            </div>
+
+            <div class="quiz-navigation">
+                <button id="prev-btn" class="btn btn-secondary" onclick="previousQuestion()">← Previous</button>
+                <button id="next-btn" class="btn btn-primary" onclick="nextQuestion()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-sidebar">
+        <h4>Questions Overview</h4>
+        <div id="questions-overview" class="questions-overview"></div>
+        <button id="submit-btn" class="btn btn-success btn-block" onclick="submitQuiz()" style="display:none; margin-top: 20px;">
+            Submit Quiz
+        </button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

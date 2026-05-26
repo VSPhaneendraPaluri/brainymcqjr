@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Results - BrainyMCQ Junior{% endblock %}
+
+{% block content %}
+<div class="results-container">
+    <div class="results-header">
+        <h2>Quiz Results 🎉</h2>
+        <p>Completed on: {{ score.quiz_date.strftime('%d-%m-%Y %H:%M') }}</p>
+    </div>
+
+    <div class="score-summary">
+        <div class="total-score">
+            <div class="score-circle">
+                <span class="score-value">{{ score.total_score }}/50</span>
+                <span class="score-label">Total Score</span>
+            </div>
+            <p class="score-percentage">{{ ((score.total_score / 50) * 100)|int }}%</p>
+        </div>
+
+        <div class="subject-scores">
+            <div class="subject-card maths">
+                <h3>Mathematics</h3>
+                <div class="subject-score">{{ score.math_score }}/25</div>
+                <div class="score-bar">
+                    <div class="score-bar-fill" style="width: {{ (score.math_score / 25) * 100 }}%"></div>
+                </div>
+            </div>
+
+            <div class="subject-card science">
+                <h3>Science</h3>
+                <div class="subject-score">{{ score.science_score }}/25</div>
+                <div class="score-bar">
+                    <div class="score-bar-fill" style="width: {{ (score.science_score / 25) * 100 }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="time-spent">
+            <p>⏱️ Time Spent: <strong>{{ (score.time_spent // 60) if score.time_spent else '-' }} minutes</strong></p>
+        </div>
+    </div>
+
+    <div class="results-feedback">
+        {% if score.total_score >= 40 %}
+            <div class="feedback excellent">
+                <h3>Excellent Work! 🌟</h3>
+                <p>You scored above 80%! Keep up the amazing performance!</p>
+            </div>
+        {% elif score.total_score >= 30 %}
+            <div class="feedback good">
+                <h3>Good Job! 👍</h3>
+                <p>You scored 60-80%. Practice more to improve further!</p>
+            </div>
+        {% elif score.total_score >= 20 %}
+            <div class="feedback fair">
+                <h3>Keep Learning! 📚</h3>
+                <p>You scored 40-60%. More practice will help you improve!</p>
+            </div>
+        {% else %}
+            <div class="feedback need-improvement">
+                <h3>Need More Practice! 💪</h3>
+                <p>You scored below 40%. Review the concepts and try again!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="results-actions">
+        <a href="{{ url_for('quiz.start_quiz') }}" class="btn btn-primary btn-lg">Take Another Quiz</a>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary btn-lg">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
